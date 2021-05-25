@@ -2,28 +2,29 @@ let url = "https://api.nasa.gov/EPIC/api/natural/images?api_key=BeO4hV6zUslD93eC
 
 var fotos = [];
 
-fetch(url)
-    .then(response => response.json())
-    .then(data => {
+const verImagenes = async () => {
+    const data = await obtenerDatos();
+
+    try {
         let fecha2 = data[0].date;
         fecha2 = fecha2.substring(0, 10);
         fecha2 = fecha2.replace("-", "/");
         fecha2 = fecha2.replace("-", "/");
 
-        document.querySelector(".titulo").innerText = `Imagenes del día ${fecha2}`;
+        document.querySelector(".titulo").innerText = `Imágenes del día ${fecha2}`;
 
         var listo = false;
         for (var i in data) {
             document.querySelector(".contenedorImg").innerHTML +=
                 `<img class="img${i}" style="display:none" src="https://epic.gsfc.nasa.gov/archive/natural/${fecha2}/jpg/${data[i].image}.jpg">`;
-            if(i == data.length - 1){
+            if (i == data.length - 1) {
                 listo = true;
             }
         }
 
         const spinner = document.querySelector(".spinner");
 
-        if(listo){
+        if (listo) {
             spinner.style.display = "none";
             spinner.style.animation = "none";
         }
@@ -44,6 +45,15 @@ fetch(url)
 
         document.querySelector(".parrafo").innerText = `${data[0].caption}`;
 
-    }).catch(err => {
-        console.log(err)
-    })
+    } catch (err) {
+        console.error(err)
+    }
+
+    async function obtenerDatos() {
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => data);
+    }
+}
+
+verImagenes();
